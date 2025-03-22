@@ -1,0 +1,64 @@
+User Collection:
+    {
+    "_id": ObjectId,                // Auto-generated user ID
+    "email": String,               // User’s email (unique, required)
+    "password": String,            // Hashed password
+    "username": String,            // Optional display name
+    "createdAt": Date,             // Timestamp of account creation
+    "lastLogin": Date,             // Track last login for analytics
+    }
+
+Resume Collection:
+    {
+    "_id": ObjectId,                // Auto-generated resume ID
+    "userId": ObjectId,            // Reference to User
+    "title": String,               // e.g., "Software Engineer Resume"
+    "originalContent": String,     // Raw text of the uploaded resume
+    "enhancedContent": String,     // AI-enhanced version of the resume
+    "jobDescriptionId": ObjectId,  // Reference to JobDescription (optional)
+    "resumeScore": Number,         // 0-100 score based on job alignment
+    "visualScore": Number,         // 0-100 score for formatting/design
+    "tone": String,                // e.g., "professional", "creative"
+    "keywords": [String],          // Extracted ATS keywords
+    "bulletPoints": [              // Array of enhanced bullet points
+        {
+        "original": String,        // Original text
+        "enhanced": String,        // AI-rewritten text
+        "impactScore": Number      // Optional: strength of the bullet (0-10)
+        }
+    ],
+    "collaborators": [String],     // Array of emails for real-time collaboration
+    "createdAt": Date,             // Timestamp
+    "updatedAt": Date              // Last update timestamp
+    }
+
+JobDescription Collection:
+    {
+    "_id": ObjectId,                // Auto-generated job ID
+    "userId": ObjectId,            // Reference to User
+    "title": String,               // e.g., "Senior Developer at TechCorp"
+    "content": String,             // Raw text of the job description
+    "parsedData": {                // Extracted data from AI parsing
+        "skills": [String],          // e.g., ["Python", "React"]
+        "keywords": [String],        // e.g., ["teamwork", "agile"]
+        "responsibilities": [String] // e.g., ["Lead a team", "Code APIs"]
+    },
+    "createdAt": Date              // Timestamp
+    }
+
+CoverLetter:
+    {
+    "_id": ObjectId,                // Auto-generated cover letter ID
+    "userId": ObjectId,            // Reference to User
+    "resumeId": ObjectId,          // Reference to Resume
+    "jobDescriptionId": ObjectId,  // Reference to JobDescription
+    "content": String,             // Generated cover letter text
+    "createdAt": Date              // Timestamp
+    }
+
+
+Template Collection:
+{
+    _id: ObjectId,
+    latex_file_path: string
+}
