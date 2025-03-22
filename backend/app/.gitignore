@@ -1,0 +1,8 @@
+# Ignore service.json files in any directory
+**/service.json
+
+# Ignore node_modules directory
+node_modules
+
+# Ignore generated_pdfs directory
+generated_pdfs

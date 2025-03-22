@@ -4,8 +4,9 @@ import os
 import json
 from typing import Dict, Any
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
 # Set Google Application Credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/rohan6891/Desktop/projects/cvcraft/backend/app/services/service.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = model_path = os.path.join(current_dir, "service.json")
 
 # Initialize AI Model
 model = genai.GenerativeModel(
