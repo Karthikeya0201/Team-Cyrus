@@ -1,28 +1,42 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, Eye, X } from "lucide-react"; // Import icons
 
-const templates = [
-  { id: 1, name: 'Deedy Resume Reversed', image: 'src/assets/cv_images/1.jpeg' },
-  { id: 2, name: 'RenderCV sb2nov Theme', image: 'src/assets/cv_images/2.jpeg' },
-  { id: 3, name: 'RenderCV EngineeringResumes Theme', image: 'src/assets/cv_images/3.jpeg' },
-  { id: 4, name: 'Recreating Business Insiders CV of Marissa Mayer', image: 'src/assets/cv_images/4.jpeg' },
-  { id: 5, name: 'Simple Hipster CV', image: 'src/assets/cv_images/5.jpeg' },
-  { id: 6, name: 'Anti CV', image: 'src/assets/cv_images/6.jpeg' },
-  { id: 7, name: 'Yuans Resume Template', image: 'src/assets/cv_images/7.jpeg' },
-  { id: 8, name: 'MTecks Resume', image: 'src/assets/cv_images/8.jpeg' },
-  { id: 9, name: 'Clean Academic CV Template', image: 'src/assets/cv_images/9.jpeg' },
-  { id: 10, name: 'Academic CV Template', image: 'src/assets/cv_images/10.jpeg' },
-];
-
+interface Template {
+  id: number;
+  name: string;
+  image: string;
+}
 
 const EnhanceCV: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isJobSpecific, setIsJobSpecific] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState(""); // New state for additional info
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null); // For preview popup
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null); // For download button
+
+  useEffect(() => {
+    // Fetch the templates from the JSON file
+    const fetchTemplates = async () => {
+      try {
+        const response = await fetch("src/assets/cv_images/images.json");
+        const data = await response.json();
+        const templatesData = data.assets.map((template: any, index: number) => ({
+          id: index + 1,
+          name: template.name,
+          image: `src/assets/cv_images/${template.fileName}`,
+        }));
+        setTemplates(templatesData);
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFile(acceptedFiles[0]);
@@ -37,6 +51,7 @@ const EnhanceCV: React.FC = () => {
     },
     multiple: false,
   });
+
   const handleSubmit = async () => {
     if (!file) {
       alert("Please upload a CV file before submitting");
@@ -45,23 +60,19 @@ const EnhanceCV: React.FC = () => {
 
     const formData = new FormData();
     formData.append("file", file);
-
-    const requestData = {
-      jobSpecific: isJobSpecific,
-      jobDescription: isJobSpecific ? jobDescription : null,
-      additionalInfo: additionalInfo || null,
-      selectedTemplate: selectedTemplate || null,
-    };
-
-    formData.append("data", JSON.stringify(requestData));
+    formData.append("job_description", jobDescription);
+    formData.append("template_name", selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.name || "" : "");
+    formData.append("additional_info", additionalInfo);
 
     // Debugging: Log the data being sent
     console.log("Submitting CV Enhancement Request:");
     console.log("File:", file.name);
-    console.log("Request Data:", requestData);
+    console.log("Job Description:", jobDescription);
+    console.log("Template Name:", selectedTemplate ? templates.find(t => t.id === selectedTemplate)?.name : "");
+    console.log("Additional Info:", additionalInfo);
 
     try {
-      const response = await fetch("http://localhost:5000/enhance-cv", {
+      const response = await fetch("http://localhost:8000/api/v1/resume/enhance", {
         method: "POST",
         body: formData,
       });
@@ -70,7 +81,10 @@ const EnhanceCV: React.FC = () => {
         throw new Error("Failed to submit");
       }
 
-      const result = await response.json();
+      const result = await response.blob();
+      const url = window.URL.createObjectURL(result);
+      setDownloadUrl(url);
+
       console.log("Success:", result);
       alert("CV enhancement request submitted successfully!");
     } catch (error) {
@@ -79,7 +93,18 @@ const EnhanceCV: React.FC = () => {
     }
   };
 
-
+  const handleDownload = () => {
+    if (downloadUrl) {
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = "enhanced_resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      setDownloadUrl(null); // Reset the download URL after download
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -150,15 +175,6 @@ const EnhanceCV: React.FC = () => {
                 className={`relative p-4 rounded-xl border transition-all w-full shadow-md overflow-hidden
                 ${selectedTemplate === template.id ? "border-blue-500 ring-4 ring-blue-300" : "border-gray-300 hover:border-blue-400"}`}
               >
-                {/* <div
-                  className="absolute top-3 right-3 bg-gray-800/80 p-2 rounded-full cursor-pointer hover:bg-gray-900 transition"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPreviewImage(template.image);
-                  }}
-                >
-                  <Eye className="w-5 h-5 text-white" />
-                </div> */}
                 <div
                   className="w-full bg-cover bg-center rounded-lg"
                   style={{
@@ -172,13 +188,22 @@ const EnhanceCV: React.FC = () => {
           </div>
         </div>
       </div>
-      <button
-        className="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-bold hover:scale-105 transition-all shadow-lg"
-        disabled={!file}
-        onClick={handleSubmit}
-      >
-        Enhance CV
-      </button>
+      {downloadUrl ? (
+        <button
+          className="w-full py-3 px-4 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg font-bold hover:scale-105 transition-all shadow-lg"
+          onClick={handleDownload}
+        >
+          Download CV
+        </button>
+      ) : (
+        <button
+          className="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-bold hover:scale-105 transition-all shadow-lg"
+          disabled={!file}
+          onClick={handleSubmit}
+        >
+          Enhance CV
+        </button>
+      )}
     </div>
   );
 };

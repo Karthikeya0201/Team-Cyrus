@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Set Google Application Credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = model_path = os.path.join(current_dir, "service.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/rohan6891/Desktop/projects/cvcraft/backend/app/services/service.json"
 
 # Initialize AI Model
 model = genai.GenerativeModel(
@@ -25,8 +25,16 @@ async def generate_enhanced_resume(
     additional_info: str = ""
 ) -> Dict[str, str]:
 
+    print("in generate_enhanced_resume")
+    print(parsed_resume)
+    print(job_description)
+    print(template_file)
+    print(additional_info)
+
+
     with open(f"templates/{template_file}", "r") as f:
         template_content = f.read()
+        print(template_content)
 
     generation_prompt = f"""
     Generate 100% compilable LaTeX code for a resume strictly based on the provided data and template:
@@ -55,11 +63,12 @@ async def generate_enhanced_resume(
     --- ADDITIONAL INFO ---
     {additional_info if additional_info.strip() else "None"}
     """
+    
+    print(generation_prompt)
 
     # Generate LaTeX code
     response = model.generate_content(generation_prompt)
     response_text = response.text.strip()
-
     # Log the raw response for debugging
     print("Raw Generation Response:", response_text)
 

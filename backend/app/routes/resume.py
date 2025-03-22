@@ -18,11 +18,15 @@ async def enhance_resume(
     template_name: str = Form(...),
     additional_info:str = Form(...)
 ):
+    print(file, job_description, template_name, additional_info)
+
     try:
         # Parse the current resume
         parsed_resume = await parse_resume(file)
 
-        parsed_job_description=await parse_job_description(job_description)
+        print(parsed_resume)
+        parsed_job_description = await parse_job_description(job_description)
+        print(parse_job_description)
 
         with open("templates/tex.json", "r") as f:
             templates = json.load(f)["templates"]
@@ -32,6 +36,8 @@ async def enhance_resume(
             "1.tex"  # Default template
         )
 
+
+        print(template_file)
         # Generate enhanced resume
         result = await generate_enhanced_resume(
             parsed_resume=parsed_resume,
@@ -40,8 +46,11 @@ async def enhance_resume(
             additional_info=additional_info
         )
 
+        print(result)
         # Compile LaTeX to PDF
         latex_code = result["latex_code"]  # Extract LaTeX code from the dictionary
+        print(latex_code)
+
         pdf_path = await compile_latex_to_pdf(latex_code, f"resume_{uuid.uuid4()}.pdf")
 
         return FileResponse(
