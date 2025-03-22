@@ -7,6 +7,7 @@ from app.services.ResumeGenerator import generate_enhanced_resume
 import os
 from app.services.LatexCompiler import compile_latex_to_pdf  # Import the compiler service
 import uuid
+from app.services.ATS import calculate_matching_score
 
 router = APIRouter()
 
@@ -48,6 +49,29 @@ async def enhance_resume(
             media_type="application/pdf",
             filename="enhanced_resume.pdf"
         )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ats")
+async def ats_analysis(
+    file: UploadFile = File(...),
+    job_description: str = Form(...)
+):
+    try:
+        # Parse the current resume
+        candidate_profile = await parse_resume(file)
+
+        # Parse the job description
+        job_requirements = await parse_job_description(job_description)
+
+        # Calculate matching score
+        matching_score = await calculate_matching_score(
+            job_requirements=job_requirements,
+            candidate_profile=candidate_profile
+        )
+
+        return matching_score
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
