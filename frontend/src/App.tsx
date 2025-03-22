@@ -6,6 +6,8 @@ import EnhanceCV from './components/EnhanceCV'
 import CreateCV from './components/CreateCV'
 import ATSScore from './components/ATSScore'
 import LandingPage from './components/LandingPage'
+import { LoginForm } from './components/LoginForm';
+import SignupForm from './components/SignupForm';
 
 function App() {
   return (
@@ -13,6 +15,16 @@ function App() {
       <Routes>
         {/* Landing Page without Layout */}
         <Route path="/" element={<LandingPage />} />
+        
+        {/* Login Page */}
+        <Route path="/login" element={<LoginForm onLoginSuccess={function (): void {
+          throw new Error('Function not implemented.')
+        } } />} />
+
+        {/* Signup Page */}
+        <Route path="/signup" element={<SignupForm onSignupSuccess={function (): void {
+          throw new Error('Function not implemented.')
+        } } />} />
 
         {/* Wrap Layout around only the authenticated pages */}
         <Route

@@ -1,7 +1,10 @@
 import React from 'react';
 import { FileText, ChevronRight, LogIn } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-function App() {
+function LandingPage() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Enhanced Background Design */}
@@ -35,8 +38,8 @@ function App() {
           <button className="text-gray-600 hover:text-gray-900">Tools</button>
           <button className="text-gray-600 hover:text-gray-900">Pricing</button>
           <button className="text-gray-600 hover:text-gray-900">FAQ's</button>
-          <button className="text-indigo-600 font-medium">Log In</button>
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition">
+          <button className="text-indigo-600 font-medium" onClick={() => navigate('/login')}>Log In</button>
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition" onClick={() => navigate('/signup')}>
             Get Started
           </button>
         </div>
@@ -56,13 +59,13 @@ function App() {
           </p>
           <div className="flex items-center justify-center gap-4">
             <button
-              onClick={() => console.log('Start Creating')}
+              onClick={() => navigate('/signup')}
               className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
             >
               + Start Creating
             </button>
             <button
-              onClick={() => console.log('Log In')}
+              onClick={() => navigate('/login')}
               className="text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-50 transition flex items-center gap-2"
             >
               Log In
@@ -139,4 +142,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;
