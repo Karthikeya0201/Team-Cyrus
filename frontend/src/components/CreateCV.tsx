@@ -1,183 +1,136 @@
-import React, { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { Upload, Eye, X } from "lucide-react"; // Import icons
-
-const templates = [
-  { id: 1, name: 'Deedy Resume Reversed', image: 'src/assets/cv_images/1.jpeg' },
-  { id: 2, name: 'RenderCV sb2nov Theme', image: 'src/assets/cv_images/2.jpeg' },
-  { id: 3, name: 'RenderCV EngineeringResumes Theme', image: 'src/assets/cv_images/3.jpeg' },
-  { id: 4, name: 'Recreating Business Insiders CV of Marissa Mayer', image: 'src/assets/cv_images/4.jpeg' },
-  { id: 5, name: 'Simple Hipster CV', image: 'src/assets/cv_images/5.jpeg' },
-  { id: 6, name: 'Anti CV', image: 'src/assets/cv_images/6.jpeg' },
-  { id: 7, name: 'Yuans Resume Template', image: 'src/assets/cv_images/7.jpeg' },
-  { id: 8, name: 'MTecks Resume', image: 'src/assets/cv_images/8.jpeg' },
-  { id: 9, name: 'Clean Academic CV Template', image: 'src/assets/cv_images/9.jpeg' },
-  { id: 10, name: 'Academic CV Template', image: 'src/assets/cv_images/10.jpeg' },
-];
-
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
 
 const CreateCV: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [isJobSpecific, setIsJobSpecific] = useState(false);
-  const [jobDescription, setJobDescription] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState(""); // New state for additional info
-  const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null); // For preview popup
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFile(acceptedFiles[0]);
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "application/pdf": [".pdf"],
-      "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-    },
-    multiple: false,
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    linkedin: "",
+    summaryAndGithub: "",
+    technicalSkills: "",
+    softSkills: "",
+    languages: "",
+    projects: [{ name: "", description: "", techStack: "", githubLink: "" }],
+    workExperience: [{ role: "", company: "", duration: "", description: "" }],
+    education: [{ degree: "", institution: "", graduationYear: "" }],
+    achievements: "",
+    volunteering: "",
   });
-  const handleSubmit = async () => {
-    if (!file) {
-      alert("Please upload a CV file before submitting");
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const requestData = {
-      jobSpecific: isJobSpecific,
-      jobDescription: isJobSpecific ? jobDescription : null,
-      additionalInfo: additionalInfo || null,
-      selectedTemplate: selectedTemplate || null,
-    };
-
-    formData.append("data", JSON.stringify(requestData));
-
-    // Debugging: Log the data being sent
-    console.log("Submitting CV Enhancement Request:");
-    console.log("File:", file.name);
-    console.log("Request Data:", requestData);
-
-    try {
-      const response = await fetch("http://localhost:5000/enhance-cv", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit");
-      }
-
-      const result = await response.json();
-      console.log("Success:", result);
-      alert("CV enhancement request submitted successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error submitting the request");
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index?: number,
+    field?: keyof (typeof formData)["education"][number] | keyof (typeof formData)["projects"][number] | keyof (typeof formData)["workExperience"][number],
+    section?: "education" | "projects" | "workExperience"
+  ) => {
+    if (section && index !== undefined && field) {
+      const updatedSection = [...formData[section]];
+      (updatedSection[index] as any)[field] = e.target.value;
+      setFormData({ ...formData, [section]: updatedSection });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
     }
   };
 
+  const addField = (section: "education" | "projects" | "workExperience", newField: any) => {
+    setFormData({ ...formData, [section]: [...formData[section], newField] });
+  };
 
+  const inputClass = "border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Enhance Your CV</h1>
+    <div className="max-w-6xl mx-auto p-6 rounded-lg">
+      <h2 className="text-3xl font-bold text-black-600 mb-6 text-center">Create Your CV</h2>
 
-      {/* Upload Section */}
-      <div
-        {...getRootProps()}
-        className={`border-2 border-dashed border-gray-400 rounded-lg p-8 mb-8 text-center cursor-pointer transition-all opacity-90
-          ${isDragActive ? "border-pink-500 bg-pink-50" : "border-blue-600"}`}
-      >
-        <input {...getInputProps()} />
-        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        {file ? (
-          <p className="text-gray-600">Selected file: {file.name}</p>
-        ) : (
-          <div>
-            <p className="text-lg font-medium text-gray-600">Drag & drop your CV here, or click to select</p>
-            <p className="text-sm text-gray-500 mt-2">Supports PDF, DOC, and DOCX files</p>
-          </div>
-        )}
-      </div>
-
-      {/* Enhancement Options */}
-      <div className="space-y-6">
-        <div className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            id="jobSpecific"
-            checked={isJobSpecific}
-            onChange={(e) => setIsJobSpecific(e.target.checked)}
-            className="h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-          />
-          <label htmlFor="jobSpecific" className="text-gray-700 font-medium">Job-specific enhancement</label>
+      {/* Personal Information */}
+      <section>
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Personal Information</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input name="fullName" placeholder="Full Name" onChange={handleChange} className={inputClass} />
+          <input name="email" placeholder="Email" onChange={handleChange} className={inputClass} />
+          <input name="phone" placeholder="Phone Number" onChange={handleChange} className={inputClass} />
+          <input name="linkedin" placeholder="LinkedIn Profile" onChange={handleChange} className={inputClass} />
         </div>
+      </section>
 
-        {isJobSpecific && (
-          <div className="animate-fadeIn">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Job Description</label>
-            <textarea
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              className="w-full h-32 px-3 py-2 border border-gray-400 rounded-lg focus:border-blue-400 focus:ring-1 focus:border-blue-400"
-              placeholder="Paste the job description here..."
-            />
+      {/* Professional Summary & GitHub */}
+      <section className="mt-4">
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Professional Summary & GitHub</h3>
+        <textarea name="summaryAndGithub" placeholder="AI-generated summary and GitHub profile" onChange={handleChange} className={inputClass} />
+      </section>
+
+      {/* Skills */}
+      <section className="mt-4">
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Skills</h3>
+        <textarea name="technicalSkills" placeholder="Technical Skills" onChange={handleChange} className={inputClass} />
+        <textarea name="softSkills" placeholder="Soft Skills" onChange={handleChange} className={inputClass} />
+        <textarea name="languages" placeholder="Languages" onChange={handleChange} className={inputClass} />
+      </section>
+
+      {/* Education */}
+      <section className="mt-4">
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Education</h3>
+        {formData.education.map((edu, index) => (
+          <div key={index} className="flex flex-col gap-2 border p-4 rounded-lg shadow-sm mb-2">
+            <input placeholder="Degree" value={edu.degree} onChange={(e) => handleChange(e, index, "degree", "education")} className={inputClass} />
+            <input placeholder="Institution" value={edu.institution} onChange={(e) => handleChange(e, index, "institution", "education")} className={inputClass} />
+            <input placeholder="Year of Graduation" value={edu.graduationYear} onChange={(e) => handleChange(e, index, "graduationYear", "education")} className={inputClass} />
           </div>
-        )}
+        ))}
+        <button onClick={() => addField("education", { degree: "", institution: "", graduationYear: "" })} className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mt-2">
+          <Plus size={20} /> Add Education
+        </button>
+      </section>
 
-        {/* Additional Information */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Additional Information</label>
-          <textarea
-            value={additionalInfo}
-            onChange={(e) => setAdditionalInfo(e.target.value)}
-            className="w-full h-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-600 focus:border-blue-600"
-            placeholder="Add any additional details about your CV enhancement needs..."
-          />
-        </div>
+      <section className="mt-4">
+  <h3 className="text-xl font-semibold text-gray-700 mb-2">Projects</h3>
+  {formData.projects.map((proj, index) => (
+    <div key={index} className="flex flex-col gap-2 border p-4 rounded-lg shadow-sm mb-2">
+      <input
+        placeholder="Project Details (Name, Description, Tech Stack, GitHub Link)"
+        value={proj.name}
+        onChange={(e) => handleChange(e, index, "name", "projects")}
+        className={inputClass}
+      />
+    </div>
+  ))}
+  <button
+    onClick={() => addField("projects", { name: "" })}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mt-2"
+  >
+    <Plus size={20} /> Add Project
+  </button>
+</section>
 
-        {/* Template Selection */}
-        <div>
-          <h3 className="text-lg font-medium text-gray-800 mb-4">Choose a Template (Optional)</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {templates.map((template) => (
-              <button
-                key={template.id}
-                onClick={() => setSelectedTemplate(template.id)}
-                className={`relative p-4 rounded-xl border transition-all w-full shadow-md overflow-hidden
-                ${selectedTemplate === template.id ? "border-blue-500 ring-4 ring-blue-300" : "border-gray-300 hover:border-blue-400"}`}
-              >
-                {/* <div
-                  className="absolute top-3 right-3 bg-gray-800/80 p-2 rounded-full cursor-pointer hover:bg-gray-900 transition"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPreviewImage(template.image);
-                  }}
-                >
-                  <Eye className="w-5 h-5 text-white" />
-                </div> */}
-                <div
-                  className="w-full bg-cover bg-center rounded-lg"
-                  style={{
-                    backgroundImage: `url(${template.image})`,
-                    height: "400px",
-                  }}
-                />
-                <p className="text-sm text-gray-700 mt-3 text-center font-semibold">{template.name}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-      <button
-        className="w-full py-3 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-bold hover:scale-105 transition-all shadow-lg"
-        disabled={!file}
-        onClick={handleSubmit}
-      >
-        Enhance CV
+{/* Work Experience */}
+<section className="mt-4">
+  <h3 className="text-xl font-semibold text-gray-700 mb-2">Work Experience</h3>
+  {formData.workExperience.map((exp, index) => (
+    <div key={index} className="flex flex-col gap-2 border p-4 rounded-lg shadow-sm mb-2">
+      <input
+        placeholder="Work Experience (Role, Company, Duration, Description)"
+        value={exp.role}
+        onChange={(e) => handleChange(e, index, "role", "workExperience")}
+        className={inputClass}
+      />
+    </div>
+  ))}
+  <button
+    onClick={() => addField("workExperience", { role: "" })}
+    className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mt-2"
+  >
+    <Plus size={20} /> Add Work Experience
+  </button>
+</section>      {/* Achievements */}
+      <section className="mt-4">
+        <h3 className="text-xl font-semibold text-gray-700 mb-2">Achievements & Awards</h3>
+        <textarea name="achievements" placeholder="Hackathons, Competitions, Scholarships" onChange={handleChange} className={inputClass} />
+      </section>
+
+      {/* Submit Button */}
+      <button className="mt-6 w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+        Generate CV
       </button>
     </div>
   );
