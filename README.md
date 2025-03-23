@@ -17,11 +17,11 @@ Key Features: AI-powered enhancement, bullet point optimization, ATS compatibili
 
 ### Dashboard
 
-![Dashboard](https://user-images.githubusercontent.com/your-username/your-repo-name/dashboard.png)
+![Dashboard](https://github.com/Karthikeya0201/Team-Cyrus/blob/main/dashboard.png)
 
 ### Enhance CV
 
-![Enhance CV](https://user-images.githubusercontent.com/your-username/your-repo-name/enhance-cv.png)
+![Enhance CV]([https://github.com/Karthikeya0201/Team-Cyrus/blob/main/enhance-cv.png)
 
 ## Getting Started
 
