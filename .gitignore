@@ -5,4 +5,8 @@
 node_modules
 
 # Ignore generated_pdfs directory
-generated_pdfs
+
+.idea
+/backend/generated_pdfs/
+/backend/rough/
+**/*.zip
