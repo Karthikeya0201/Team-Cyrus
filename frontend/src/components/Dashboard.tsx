@@ -67,7 +67,7 @@ export default function Dashboard() {
               <h3 className="text-lg font-bold mt-3">{template.name}</h3>
 
               {/* Use Template Button */}
-              <Link to="/create-resume" className="text-blue-600 hover:text-blue-700 font-medium text-sm mt-1">
+              <Link to="/create-cv" className="text-blue-600 hover:text-blue-700 font-medium text-sm mt-1">
                 Use Template →
               </Link>
             </div>
@@ -77,7 +77,7 @@ export default function Dashboard() {
 
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Link to="/enhance-resume" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+        <Link to="/enhance-cv" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-center mb-6">
             <SparklesIcon className="w-12 h-12 text-blue-600" />
           </div>
@@ -85,7 +85,7 @@ export default function Dashboard() {
           <p className="text-gray-600 text-center">Improve your existing resume with AI-powered suggestions</p>
         </Link>
 
-        <Link to="/create-resume" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+        <Link to="/create-cv" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-center mb-2">
             <DocumentPlusIcon className="w-12 h-12 text-blue-600" />
           </div>
