@@ -10,7 +10,7 @@ import re
 from datetime import datetime
 
 load_dotenv()
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+client = Groq(api_key="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")
 
 DETAILED_RESUME_TEMPLATE = {
     "personal_information": {

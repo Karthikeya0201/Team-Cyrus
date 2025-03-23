@@ -2,7 +2,8 @@ import google.generativeai as genai
 from google.generativeai.types import GenerationConfig
 import os
 import json
-from typing import Dict, Any
+from typing import Dict, Any, Optional
+from fastapi import Form
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Set Google Application Credentials
@@ -20,8 +21,8 @@ model = genai.GenerativeModel(
 
 async def generate_enhanced_resume(
     parsed_resume: Dict[str, Any],
-    job_description: Dict[str, Any],
     template_file: str,
+    job_description: Optional[str] = Form(None),
     additional_info: str = ""
 ) -> Dict[str, str]:
 
