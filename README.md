@@ -21,7 +21,7 @@ Key Features: AI-powered enhancement, bullet point optimization, ATS compatibili
 
 ### Enhance CV
 
-![Enhance CV]([https://github.com/Karthikeya0201/Team-Cyrus/blob/main/enhance-cv.png)
+![Enhance CV](https://github.com/Karthikeya0201/Team-Cyrus/blob/main/enhance-cv.png)
 
 ## Getting Started
 
