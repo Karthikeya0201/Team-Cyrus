@@ -67,7 +67,7 @@ async def generate_enhanced_resume(
     
     print(generation_prompt)
 
-    # Generate LaTeX code
+    # Generate LaTeX codes
     response = model.generate_content(generation_prompt)
     response_text = response.text.strip()
     # Log the raw response for debugging

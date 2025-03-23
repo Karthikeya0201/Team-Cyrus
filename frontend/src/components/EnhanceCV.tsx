@@ -77,6 +77,8 @@ const EnhanceCV: React.FC = () => {
         body: formData,
       });
 
+      console.log(response);
+
       if (!response.ok) {
         throw new Error("Failed to submit");
       }
