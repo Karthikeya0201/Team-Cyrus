@@ -34,11 +34,21 @@ const templates = [
 
 export default function Dashboard() {
   return (
-    <div className="p-5 max-w-6xl mx-4">
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Hey there, John!</h1>
-        <p className="text-xl text-gray-600">What would you like to create today?</p>
-      </div>
+    <div className="p-4 max-w-6xl mx-4">
+      <div className="mb-5 flex justify-between items-center">
+  <div>
+    <h1 className="text-4xl font-bold text-gray-900 mb-2">Hey there, John!</h1>
+    <p className="text-xl text-gray-600">What would you like to create today?</p>
+  </div>
+  <a
+    href="/ats-score"
+    className="px-6 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 w-40 text-center"
+  >
+    ATS Score
+  </a>
+</div>
+
+
 
       <div className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Popular Templates</h2>
@@ -76,7 +86,7 @@ export default function Dashboard() {
         </Link>
 
         <Link to="/create-resume" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-          <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center justify-center mb-2">
             <DocumentPlusIcon className="w-12 h-12 text-blue-600" />
           </div>
           <h2 className="text-2xl font-bold text-center mb-4">Create New Resume</h2>

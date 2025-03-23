@@ -1,25 +1,17 @@
 const config = {
   api: {
-    baseUrl: 'https://localhost:5000',
+    baseUrl: 'http://localhost:8000',
     endpoints: {
       auth: {
-        login: '/auth/login',
-        signup: '/auth/signup'
+        login: '/login',
+        signup: '/signup',
       },
-      questions: {
-        generate: '/questions/generate_questions'
-      },
-      report: {
-        get: '/report'
-      },
-      history: {
-        get: '/history'
-      },
-      feedback:{
-        submit:'/feedback/submit'
+      resume: {
+        ats: '/ats',
+        enhance: '/enhance'
       }
-    }
-  }
+    },
+  },
 };
 
 export default config;
